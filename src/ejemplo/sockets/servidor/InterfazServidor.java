@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -74,7 +75,14 @@ public class InterfazServidor extends JFrame implements Runnable {
 				
 				//Mostramos los datos
 				txtAreaTexto.append("\n" + nombre + ": " + mensaje + " para " + ip);
+				
+				Socket socketDestino = new Socket(ip, 56);				
+				
+				ObjectOutputStream datos_reenvio = new ObjectOutputStream(socketDestino.getOutputStream());
 		
+				datos_reenvio.writeObject(datos);
+				
+				datos_reenvio.close();
 				socket.close();
 				
 				/*//Creamos el stream que recibirá los datos

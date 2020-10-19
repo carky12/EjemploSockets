@@ -4,7 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -16,7 +18,7 @@ import javax.swing.JTextField;
 
 import ejemplo.sockets.modelo.PaqueteEnvio;
 
-public class PanelCliente extends JPanel {
+public class PanelCliente extends JPanel implements Runnable {
 	
 	/**
 	 * 
@@ -52,10 +54,12 @@ public class PanelCliente extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {				
 			
+				txtAreaTexto.append("\n" + txtTexto.getText());
+				
 				try {
 					
 					//Creamos el socket
-					Socket socket = new Socket("127.0.0.1", 55);
+					Socket socket = new Socket("192.168.0.11", 55);
 					
 					//Creamos el paquete con los datos que vamos a enviar al servidor
 					PaqueteEnvio datos = new PaqueteEnvio();
@@ -95,6 +99,42 @@ public class PanelCliente extends JPanel {
 		});
 		
 		add(btnEnviar);	
+		
+		Thread hilo = new Thread(this);
+		
+		hilo.start();
+		
+	}
+
+	@Override
+	public void run() {
+		
+		try {
+			
+			ServerSocket socket_servidor_cliente = new ServerSocket(56);
+		
+			Socket cliente;
+			
+			PaqueteEnvio datos_recibidos;
+			
+			while (true) {
+				
+				cliente = socket_servidor_cliente.accept();
+				
+				ObjectInputStream datos_entrada = new ObjectInputStream(cliente.getInputStream());
+				
+				datos_recibidos = (PaqueteEnvio) datos_entrada.readObject();
+				
+				txtAreaTexto.append("\n" + datos_recibidos.getNombre() + ": " + datos_recibidos.getMensaje());
+				
+				
+			}
+		
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
 		
 	}
 }
