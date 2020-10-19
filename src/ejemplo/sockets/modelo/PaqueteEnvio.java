@@ -1,7 +1,14 @@
 package ejemplo.sockets.modelo;
 
-public class PaqueteEnvio {
+import java.io.Serializable;
 
+public class PaqueteEnvio implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String nombre;
 	private String ip;
 	private String mensaje;

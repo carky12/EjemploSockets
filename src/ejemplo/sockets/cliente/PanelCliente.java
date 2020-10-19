@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -12,6 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import ejemplo.sockets.modelo.PaqueteEnvio;
 
 public class PanelCliente extends JPanel {
 	
@@ -54,14 +57,29 @@ public class PanelCliente extends JPanel {
 					//Creamos el socket
 					Socket socket = new Socket("127.0.0.1", 55);
 					
-					//Añadimos los datos del socket al stream
+					//Creamos el paquete con los datos que vamos a enviar al servidor
+					PaqueteEnvio datos = new PaqueteEnvio();
+					datos.setNombre(txtNombreUsuario.getText());
+					datos.setIp(txtIp.getText());
+					datos.setMensaje(txtAreaTexto.getText());
+					
+					//Creamos el flujo de datos de salida
+					ObjectOutputStream datos_salida = new ObjectOutputStream(socket.getOutputStream());
+					
+					//Añadimos los datos al stream
+					datos_salida.writeObject(datos);
+					
+					//Cerramos el socket
+					socket.close();
+					
+					/*//Añadimos los datos del socket al stream
 					DataOutputStream data_salida = new DataOutputStream(socket.getOutputStream());
 					
 					//Añadimos el texto al stream
 					data_salida.writeUTF(txtTexto.getText());
 					
 					//Cerramos el stream
-					data_salida.close();
+					data_salida.close();*/
 					
 					
 				} catch (UnknownHostException e1) {
